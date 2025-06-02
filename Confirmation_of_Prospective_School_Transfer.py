@@ -192,6 +192,7 @@ if st.session_state.stage == 1:
     if st.button("✒️다음 단계로"):
         if st.session_state.selected_region and st.session_state.selected_school:
             st.session_state.stage = 2
+            st.markdown("<script>window.scrollTo(0, 0);</script>", unsafe_allow_html=True)
             st.rerun()
         else:
             st.warning("지역과 학교를 모두 선택하세요.")
