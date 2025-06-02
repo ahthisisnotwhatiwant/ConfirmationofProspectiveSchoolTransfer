@@ -57,19 +57,24 @@ def convert_pdf_to_images(pdf_path, dpi=150):
 st.markdown("""
 <style>
 .title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 2.5rem;
     font-weight: bold;
-    text-align: center;
-    padding-bottom: 1rem;
+    height: 3.5rem;
     margin-bottom: 2rem;
-    background: linear-gradient(to right, #f0f2ff, #ffffff);
-    -webkit-background-clip: text;
-    color: transparent;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+
+    text-align: center;
+    position: relative;
+
     will-change: auto;
     transform: none;
-    position: relative;
     backface-visibility: hidden;
+
+    background: linear-gradient(to right, #4c51bf, #6b73ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 @media (max-width: 768px) {
