@@ -379,7 +379,7 @@ elif st.session_state.stage == 3:
                 "{{student_sign_path}}": [(1060, 1665)],
                 "{{parent_name}}": [(825, 1835)],
                 "{{parent_sign_path}}": [(1060, 1810)],
-                "{{school_name}}": [(930, 1988)],
+                "{{school_name}}": [(925, 1988)],
             }
             transfer_positions = {
                 "{{student_name}}": [(462, 420), (825, 1755)],
@@ -389,7 +389,7 @@ elif st.session_state.stage == 3:
                 "{{student_birth_date}}": [(462, 520)],
                 "{{parent_phone}}": [(1110, 620)],
                 "{{move_date}}": [(462, 825)],
-                "{{address}}": [(1110, 810), (500, 1165)],
+                "{{address}}": [(1110, 810), (490, 1170)],
                 "{{school_name}}": [(462, 1035), (310, 1235), (925, 2056)],
                 "{{next_grade}}": [(1110, 1035), (840, 1235)],
                 "{{date.today}}": [(1100, 1620)],
