@@ -82,6 +82,7 @@ st.markdown("""
     </style>
     <h1 class="title">전입학예정확인서</h1>
 """, unsafe_allow_html=True)
+
     .pdf-viewer {
         width: 100%;
         height: 500px;
