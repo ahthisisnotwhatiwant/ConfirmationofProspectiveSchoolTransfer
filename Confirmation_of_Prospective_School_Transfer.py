@@ -62,7 +62,6 @@ st.markdown("""
         text-align: center;
         padding-bottom: 1rem;
         margin-bottom: 2rem;
-        color: #000000;
         white-space: nowrap;
     }
     .pdf-viewer {
