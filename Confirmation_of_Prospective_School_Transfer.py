@@ -55,53 +55,52 @@ def convert_pdf_to_images(pdf_path, dpi=150):
         return None
 
 st.markdown("""
-    <style>
+<style>
+.title {
+    font-size: 2.3rem;
+    font-weight: bold;
+    text-align: center;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(to right, #f0f2ff, #ffffff);
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
     .title {
-        font-size: 2.3rem;
-        font-weight: bold;
-        text-align: center;
-        padding-bottom: 1rem;
-        margin-bottom: 2rem;
-        background: linear-gradient(to right, #f0f2ff, #ffffff);
-        -webkit-background-clip: text;
-        color: transparent;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        font-size: 1.8rem;
     }
+}
 
-    @media (max-width: 768px) {
-        .title {
-            font-size: 1.8rem;
-        }
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.5rem;
     }
+}
 
-    @media (max-width: 480px) {
-        .title {
-            font-size: 1.5rem;
-        }
-    }
-    </style>
-    <h1 class="title">전입학예정확인서</h1>
+.pdf-viewer {
+    width: 100%;
+    height: 500px;
+    border: 1px solid #d1d5db;
+    margin-bottom: 2rem;
+}
+
+.instruction-message {
+    background-color: #f0fdf4;
+    color: #15803d;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 0.375rem;
+    border: 1px solid #bbf7d0;
+    font-size: 0.875rem;
+    text-align: center;
+}
+</style>
+<h1 class="title">전입학예정확인서</h1>
 """, unsafe_allow_html=True)
 
-    .pdf-viewer {
-        width: 100%;
-        height: 500px;
-        border: 1px solid #d1d5db;
-        margin-bottom: 2rem;
-    }
-    .instruction-message {
-        background-color: #f0fdf4;
-        color: #15803d;
-        padding: 0.75rem;
-        margin-bottom: 1rem;
-        border-radius: 0.375rem;
-        border: 1px solid #bbf7d0;
-        font-size: 0.875rem;
-        text-align: center;
-    }
-    </style>
-    <h1 class="title">전입학예정확인서</h1>
-""", unsafe_allow_html=True)
 
 st.markdown('<div class="instruction-message">🍀 진  행 순  서 🍀<br> ①지역 및 학교 → ②개인정보 수집·이용 동의서 → ③전입학예정확인서 → ④미리보기 및 제출</div>', unsafe_allow_html=True)
 
