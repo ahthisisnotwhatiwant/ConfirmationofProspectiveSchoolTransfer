@@ -102,7 +102,7 @@ st.markdown("""
 .block-container h2:hover a,
 .block-container h3:hover a,
 .block-container h4:hover a {
-    visibility: hidden;
+    display: none !important;
 }
 </style>
 <h1 class="title">전입학예정확인서</h1>
