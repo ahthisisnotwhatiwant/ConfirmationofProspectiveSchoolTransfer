@@ -103,8 +103,8 @@ if 'stage' not in st.session_state:
     st.session_state.pdf_bytes = None
     st.session_state.filename = None
 
-def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date, relationship):
-    if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date, relationship]):
+def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, transfer_date, next_grade, move_date, relationship):
+    if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, transfer_date, next_grade, move_date, relationship]):
         return False, "모든 작성칸을 빈칸 없이 예시에 따라 작성하세요."
     return True, ""
 
@@ -234,8 +234,11 @@ elif st.session_state.stage == 3:
     else:
         st.error("전입학예정확인서 샘플 PDF를 불러올 수 없습니다. 파일 경로를 확인해주세요.")
 
+    # ────────────────────────────────────────────────────────
+    # 3행×2열 레이아웃: 왼쪽(학생), 오른쪽(법정대리인)
     col1, col2 = st.columns(2)
     with col1:
+        # (학생) 성명
         student_name = st.text_input(
             "(학생) 성명",
             placeholder="예) 한잎새",
@@ -247,6 +250,7 @@ elif st.session_state.stage == 3:
         else:
             st.session_state.student_name = student_name
 
+        # (학생) 생년월일
         today = date.today()
         min_date = today - timedelta(days=30*365)
         max_date = today + timedelta(days=30*365)
@@ -257,6 +261,8 @@ elif st.session_state.stage == 3:
             max_value=max_date,
             key="student_birth_date_input"
         )
+
+        # (학생) 현 소속 학교 및 학년
         student_school = st.text_input(
             "(학생) 현 소속 학교 및 학년",
             placeholder="예) 00초등학교, 00중학교, 00고등학교 1학년",
@@ -269,6 +275,8 @@ elif st.session_state.stage == 3:
             elif not re.match(r'^[가-힣0-9\s]+$', student_school) or re.match(r'^\d+$', student_school):
                 st.error("한글과 숫자로만 작성하세요.")
                 student_school = ""
+    with col2:
+        # (법정대리인) 성명
         parent_name = st.text_input(
             "(법정대리인) 성명",
             placeholder="예) 한나무",
@@ -277,6 +285,8 @@ elif st.session_state.stage == 3:
         if parent_name and not re.match(r'^[가-힣]+$', parent_name):
             st.error("한글로만 작성하세요.")
             parent_name = ""
+
+        # (법정대리인) 학생과의 관계
         relationship = st.text_input(
             "(법정대리인) 학생과의 관계",
             placeholder="예) 부, 모, 조부, 조모 등",
@@ -285,7 +295,8 @@ elif st.session_state.stage == 3:
         if relationship and not re.match(r'^[가-힣\s]+$', relationship):
             st.error("한글로만 작성하세요.")
             relationship = ""
-    with col2:
+
+        # (법정대리인) 휴대전화 번호
         parent_phone_input = st.text_input(
             "(법정대리인) 휴대전화 번호",
             placeholder="예) 01056785678 / 숫자로만 작성",
@@ -300,24 +311,48 @@ elif st.session_state.stage == 3:
                 parent_phone = formatted_parent_phone
         else:
             parent_phone = ""
-        st.session_state.move_date = st.date_input("전입 예정일", value=None)
-        address = st.text_input(
-            "전입 예정 주소",
-            placeholder="예) 행복택지 A-1블록 사랑아파트",
-            key="address_input"
-        )
-        if address and not re.match(r'^[가-힣a-zA-Z1-99\s-]+$', address):
-            st.error("한글, 알파벳, 숫자, 기호로만 작성하세요.")
-            address = ""
-        school_name = st.text_input("전학 예정 학교", value=st.session_state.selected_school, disabled=True)
-        next_grade = st.selectbox(
-            "전학 예정 학년",
-            options=["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"],
-            index=None,
-            placeholder="학년을 선택하세요.",
-            key="next_grade_input"
-        )
 
+    # ────────────────────────────────────────────────────────
+    # 순차 배열: 전입 예정일, 전입 예정 주소, 전학 예정일, 전학 예정 학교, 전학 예정 학년
+    st.session_state.move_date = st.date_input(
+        "전입 예정일",
+        value=None,
+        key="move_date_input"      # 키 이름 통일
+    )
+
+    address = st.text_input(
+        "전입 예정 주소",
+        placeholder="예) 행복택지 A-1블록 사랑아파트",
+        key="address_input"
+    )
+    if address and not re.match(r'^[가-힣a-zA-Z0-9\s\-]+$', address):
+        st.error("한글, 알파벳, 숫자, 기호로만 작성하세요.")
+        address = ""
+
+    # 신규 추가: (전학) 전학 예정일
+    transfer_date = st.date_input(
+        "전학 예정일",
+        value=None,
+        key="transfer_date_input"   # 키를 새로 지정
+    )
+
+    # (전학) 전학 예정 학교 (disabled)
+    school_name = st.text_input(
+        "전학 예정 학교",
+        value=st.session_state.selected_school,
+        disabled=True
+    )
+
+    # (전학) 전학 예정 학년
+    next_grade = st.selectbox(
+        "전학 예정 학년",
+        options=["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"],
+        index=None,
+        key="next_grade_input"
+    )
+
+    # ────────────────────────────────────────────────────────
+    # 서명 부분 (변경 없음)
     col1, col2 = st.columns(2)
     with col1:
         st.write("학생 서명")
@@ -342,8 +377,21 @@ elif st.session_state.stage == 3:
             key="parent_sign_canvas"
         )
 
+    # ────────────────────────────────────────────────────────
+    # 다음 단계 전 검증: transfer_date(전학 예정일) 인자를 validate_inputs에 추가
     if st.button("✒️다음 단계로"):
-        valid, error = validate_inputs(st.session_state.student_name, parent_name, student_school, st.session_state.student_birth_date, relationship, parent_phone, address, next_grade, st.session_state.move_date)
+        valid, error = validate_inputs(
+            st.session_state.student_name,
+            parent_name,
+            student_school,
+            st.session_state.student_birth_date,
+            parent_phone,
+            address,
+            transfer_date,       # 전학 예정일
+            next_grade,
+            st.session_state.move_date,
+            relationship
+        )
         if not valid:
             st.error(error)
             st.stop()
@@ -390,6 +438,7 @@ elif st.session_state.stage == 3:
                 "{{parent_phone}}": [(1110, 620)],
                 "{{move_date}}": [(462, 825)],
                 "{{address}}": [(1110, 810), (490, 1170)],
+                "{{transfer_date}}": [(462, 930)],
                 "{{school_name}}": [(462, 1035), (310, 1235), (925, 2056)],
                 "{{next_grade}}": [(1110, 1035), (840, 1235)],
                 "{{date.today}}": [(1100, 1620)],
@@ -420,6 +469,7 @@ elif st.session_state.stage == 3:
                 "{{parent_phone}}": parent_phone,
                 "{{move_date}}": st.session_state.move_date.strftime("%Y년 %m월 %d일"),
                 "{{address}}": address,
+                "{{transfer_date}}": transfer_date.strftime("%Y년 %m월 %d일"),
                 "{{next_grade}}": next_grade,
             }
 
