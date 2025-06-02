@@ -40,6 +40,24 @@ except FileNotFoundError:
     st.warning("파비콘 이미지 파일을 찾을 수 없습니다. 기본 아이콘이 사용됩니다.")
     st.set_page_config(page_title="전입학예정확인서", layout="centered")
 
+if 'scroll_flag' not in st.session_state:
+    st.session_state.scroll_flag = False
+
+# 단계 변경 시 상단 스크롤 처리
+st.markdown("""
+    <script>
+    const docReady = () => {
+        const scrollFlag = window.sessionStorage.getItem("scrollToTopFlag");
+        if (scrollFlag === "true") {
+            window.scrollTo(0, 0);
+            window.sessionStorage.setItem("scrollToTopFlag", "false");
+        }
+    };
+    document.addEventListener("DOMContentLoaded", docReady);
+    window.onload = docReady;
+    </script>
+""", unsafe_allow_html=True)
+
 def grade_to_english(grade):
     number = re.search(r'\d+', grade)
     if number:
@@ -192,7 +210,12 @@ if st.session_state.stage == 1:
     if st.button("✒️다음 단계로"):
         if st.session_state.selected_region and st.session_state.selected_school:
             st.session_state.stage = 2
-            st.markdown("<script>window.scrollTo(0, 0);</script>", unsafe_allow_html=True)
+            st.session_state.scroll_flag = True
+            st.markdown("""
+                <script>
+                window.sessionStorage.setItem("scrollToTopFlag", "true");
+                </script>
+            """, unsafe_allow_html=True)
             st.rerun()
         else:
             st.warning("지역과 학교를 모두 선택하세요.")
@@ -219,7 +242,12 @@ elif st.session_state.stage == 2:
     if consent_choice == "동의합니다.":
         if st.button("✒️다음 단계로"):
             st.session_state.stage = 3
-            st.markdown("<script>window.scrollTo(0, 0);</script>", unsafe_allow_html=True)
+            st.session_state.scroll_flag = True
+            st.markdown("""
+                <script>
+                window.sessionStorage.setItem("scrollToTopFlag", "true");
+                </script>
+            """, unsafe_allow_html=True)
             st.rerun()
     elif consent_choice == "동의하지 않습니다.":
         st.warning("개인정보 수집·이용에 동의 시에만 다음 단계로 진행할 수 있습니다.")
@@ -535,7 +563,12 @@ elif st.session_state.stage == 3:
             st.session_state.pdf_bytes = pdf_bytes
             st.session_state.filename = filename
             st.session_state.stage = 4
-            st.markdown("<script>window.scrollTo(0, 0);</script>", unsafe_allow_html=True)
+            st.session_state.scroll_flag = True
+            st.markdown("""
+                <script>
+                window.sessionStorage.setItem("scrollToTopFlag", "true");
+                </script>
+            """, unsafe_allow_html=True)
             st.rerun()
 
         except Exception as e:
