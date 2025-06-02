@@ -62,12 +62,8 @@ st.markdown("""
         text-align: center;
         padding-bottom: 1rem;
         margin-bottom: 2rem;
-        background: linear-gradient(to right, #f0f2ff, #ffffff);
-        -webkit-background-clip: text;
-        color: transparent;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        white-space: nowrap;  /* 줄바꿈 방지 */
-        overflow: hidden;      /* 넘치는 텍스트 잘림 방지 */
+        color: #4c51bf;
+        white-space: nowrap;
     }
     .pdf-viewer {
         width: 100%;
