@@ -343,7 +343,7 @@ elif st.session_state.stage == 3:
         )
 
     if st.button("✒️다음 단계로"):
-        valid, error = validate_inputs(st.session_state.student_name, parent_name, student_school, st.session_state.student_birth_date, parent_phone, address, next_grade, st.session_state.move_date)
+        valid, error = validate_inputs(st.session_state.student_name, parent_name, student_school, st.session_state.student_birth_date, relationship, parent_phone, address, next_grade, st.session_state.move_date)
         if not valid:
             st.error(error)
             st.stop()
