@@ -57,15 +57,12 @@ def convert_pdf_to_images(pdf_path, dpi=150):
 st.markdown("""
     <style>
     .title {
-        font-size: 2.5rem;
+        font-size: 5rem;
         font-weight: bold;
         text-align: center;
         padding-bottom: 0.5rem;
         margin-bottom: 0rem;
-        background: linear-gradient(to right, #f0f2ff, #ffffff);
-        -webkit-background-clip: text;
-        color: transparent;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        white-space: nowrap;
     }
     .pdf-viewer {
         width: 100%;
