@@ -219,6 +219,7 @@ elif st.session_state.stage == 2:
     if consent_choice == "동의합니다.":
         if st.button("✒️다음 단계로"):
             st.session_state.stage = 3
+            st.markdown("<script>window.scrollTo(0, 0);</script>", unsafe_allow_html=True)
             st.rerun()
     elif consent_choice == "동의하지 않습니다.":
         st.warning("개인정보 수집·이용에 동의 시에만 다음 단계로 진행할 수 있습니다.")
@@ -534,6 +535,7 @@ elif st.session_state.stage == 3:
             st.session_state.pdf_bytes = pdf_bytes
             st.session_state.filename = filename
             st.session_state.stage = 4
+            st.markdown("<script>window.scrollTo(0, 0);</script>", unsafe_allow_html=True)
             st.rerun()
 
         except Exception as e:
