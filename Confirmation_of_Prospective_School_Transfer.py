@@ -226,6 +226,14 @@ elif st.session_state.stage == 3:
     st.subheader("3단계: 전입학예정확인서")
     st.markdown('<div class="instruction-message">모든 작성칸을 올바르게 작성하세요.</div>', unsafe_allow_html=True)
 
+    transfer_images = convert_pdf_to_images(TRANSFER_SAMPLE_PATH, dpi=150)
+    if transfer_images:
+        with st.expander("📄 전입학예정확인서 예시", expanded=True):
+            for i, image in enumerate(transfer_images):
+                st.image(image, use_container_width=True)
+    else:
+        st.error("전입학예정확인서 샘플 PDF를 불러올 수 없습니다. 파일 경로를 확인해주세요.")
+    
     row1_col1, row1_col2, row1_col3 = st.columns(3)
     with row1_col1:
         student_name = st.text_input(
