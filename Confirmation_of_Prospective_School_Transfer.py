@@ -40,26 +40,6 @@ except FileNotFoundError:
     st.warning("파비콘 이미지 파일을 찾을 수 없습니다. 기본 아이콘이 사용됩니다.")
     st.set_page_config(page_title="전입학예정확인서", layout="centered")
 
-if 'scroll_flag' not in st.session_state:
-    st.session_state.scroll_flag = False
-
-# 단계 변경 시 상단 스크롤 처리
-st.markdown("""
-st.markdown("""
-<script>
-(function() {
-    let observer = new MutationObserver((mutations, obs) => {
-        const scrollFlag = sessionStorage.getItem("scrollToTopFlag");
-        if (scrollFlag === "true") {
-            window.scrollTo({top: 0, behavior: "smooth"});
-            sessionStorage.setItem("scrollToTopFlag", "false");
-        }
-    });
-    observer.observe(document.body, {childList: true, subtree: true});
-})();
-</script>
-""", unsafe_allow_html=True)
-
 def grade_to_english(grade):
     number = re.search(r'\d+', grade)
     if number:
@@ -77,10 +57,10 @@ def convert_pdf_to_images(pdf_path, dpi=150):
 st.markdown("""
     <style>
     .title {
-        font-size: 3rem;
+        font-size: 5rem;
         font-weight: bold;
         text-align: center;
-        padding-bottom: 0rem;
+        padding-bottom: 0.5rem;
         margin-bottom: 0rem;
         white-space: nowrap;
     }
@@ -102,7 +82,7 @@ st.markdown("""
     }
     @media (max-width: 480px) {
         .title {
-                font-size: 2.3rem;
+                font-size: 2.5rem;
         }
     }
     </style>
@@ -212,12 +192,6 @@ if st.session_state.stage == 1:
     if st.button("✒️다음 단계로"):
         if st.session_state.selected_region and st.session_state.selected_school:
             st.session_state.stage = 2
-            st.session_state.scroll_flag = True
-            st.markdown("""
-                <script>
-                window.sessionStorage.setItem("scrollToTopFlag", "true");
-                </script>
-            """, unsafe_allow_html=True)
             st.rerun()
         else:
             st.warning("지역과 학교를 모두 선택하세요.")
@@ -244,12 +218,6 @@ elif st.session_state.stage == 2:
     if consent_choice == "동의합니다.":
         if st.button("✒️다음 단계로"):
             st.session_state.stage = 3
-            st.session_state.scroll_flag = True
-            st.markdown("""
-                <script>
-                window.sessionStorage.setItem("scrollToTopFlag", "true");
-                </script>
-            """, unsafe_allow_html=True)
             st.rerun()
     elif consent_choice == "동의하지 않습니다.":
         st.warning("개인정보 수집·이용에 동의 시에만 다음 단계로 진행할 수 있습니다.")
@@ -565,12 +533,6 @@ elif st.session_state.stage == 3:
             st.session_state.pdf_bytes = pdf_bytes
             st.session_state.filename = filename
             st.session_state.stage = 4
-            st.session_state.scroll_flag = True
-            st.markdown("""
-                <script>
-                window.sessionStorage.setItem("scrollToTopFlag", "true");
-                </script>
-            """, unsafe_allow_html=True)
             st.rerun()
 
         except Exception as e:
