@@ -60,8 +60,8 @@ st.markdown("""
         font-size: 5rem;
         font-weight: bold;
         text-align: center;
-        padding-bottom: 1rem;
-        margin-bottom: 2rem;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0rem;
         white-space: nowrap;
     }
     .pdf-viewer {
@@ -82,7 +82,7 @@ st.markdown("""
     }
     @media (max-width: 480px) {
         .title {
-                font-size: 1.8rem;
+                font-size: 2.5rem;
         }
     }
     </style>
