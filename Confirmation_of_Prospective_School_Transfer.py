@@ -59,7 +59,6 @@ st.markdown("""
     .title {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #4c51bf;
         text-align: center;
         padding-bottom: 1rem;
         margin-bottom: 2rem;
@@ -68,6 +67,21 @@ st.markdown("""
         color: transparent;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
+
+    @media (max-width: 768px) {
+        .title {
+            font-size: 1.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .title {
+            font-size: 1.5rem;
+        }
+    }
+    </style>
+    <h1 class="title">전입학예정확인서</h1>
+""", unsafe_allow_html=True)
     .pdf-viewer {
         width: 100%;
         height: 500px;
