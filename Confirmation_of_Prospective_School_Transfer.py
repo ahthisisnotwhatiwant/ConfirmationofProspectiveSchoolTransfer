@@ -57,7 +57,7 @@ def convert_pdf_to_images(pdf_path, dpi=150):
 st.markdown("""
     <style>
     .title {
-        font-size: 2.5rem;
+        font-size: 3rem;
         font-weight: bold;
         text-align: center;
         padding-bottom: 0.5rem;
@@ -82,7 +82,7 @@ st.markdown("""
     }
     @media (max-width: 480px) {
         .title {
-                font-size: 2.5rem;
+                font-size: 2.3rem;
         }
     }
     </style>
