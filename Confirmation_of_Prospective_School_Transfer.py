@@ -91,7 +91,7 @@ st.markdown("""
         }
     }
     </style>
-    <h1 class="title">전입학예정확인서</h1>
+    <div class="title">전입학예정확인서</div>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="instruction-message">🍀 진  행 순  서 🍀<br> ①지역 및 학교 → ②개인정보 수집·이용 동의서 → ③전입학예정확인서 → ④미리보기 및 제출</div>', unsafe_allow_html=True)
