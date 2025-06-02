@@ -66,6 +66,10 @@ st.markdown("""
     -webkit-background-clip: text;
     color: transparent;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    will-change: auto;
+    transform: none;
+    position: relative;
+    backface-visibility: hidden;
 }
 
 @media (max-width: 768px) {
