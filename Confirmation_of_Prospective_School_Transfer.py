@@ -57,10 +57,8 @@ def convert_pdf_to_images(pdf_path, dpi=150):
 st.markdown("""
     <style>
     .title {
-        font-size: 80vw;
-        max-font-size: 2.5rem;
-        min-font-size: 1.5rem;
-        color: #4c51bf;
+        font-size: 2.5rem;
+        font-weight: bold;
         text-align: center;
         padding-bottom: 1rem;
         margin-bottom: 2rem;
@@ -68,6 +66,8 @@ st.markdown("""
         -webkit-background-clip: text;
         color: transparent;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        white-space: nowrap;  /* 줄바꿈 방지 */
+        overflow: hidden;      /* 넘치는 텍스트 잘림 방지 */
     }
     .pdf-viewer {
         width: 100%;
@@ -84,6 +84,11 @@ st.markdown("""
         border: 1px solid #bbf7d0;
         font-size: 0.875rem;
         text-align: center;
+    }
+    @media (max-width: 480px) {
+        .title {
+                font-size: 1.8rem;
+        }
     }
     </style>
     <h1 class="title">전입학예정확인서</h1>
