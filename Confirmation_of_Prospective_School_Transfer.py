@@ -45,17 +45,19 @@ if 'scroll_flag' not in st.session_state:
 
 # 단계 변경 시 상단 스크롤 처리
 st.markdown("""
-    <script>
-    const docReady = () => {
-        const scrollFlag = window.sessionStorage.getItem("scrollToTopFlag");
+st.markdown("""
+<script>
+(function() {
+    let observer = new MutationObserver((mutations, obs) => {
+        const scrollFlag = sessionStorage.getItem("scrollToTopFlag");
         if (scrollFlag === "true") {
-            window.scrollTo(0, 0);
-            window.sessionStorage.setItem("scrollToTopFlag", "false");
+            window.scrollTo({top: 0, behavior: "smooth"});
+            sessionStorage.setItem("scrollToTopFlag", "false");
         }
-    };
-    document.addEventListener("DOMContentLoaded", docReady);
-    window.onload = docReady;
-    </script>
+    });
+    observer.observe(document.body, {childList: true, subtree: true});
+})();
+</script>
 """, unsafe_allow_html=True)
 
 def grade_to_english(grade):
