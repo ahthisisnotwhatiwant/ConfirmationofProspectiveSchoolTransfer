@@ -17,7 +17,6 @@ from email.header import Header
 from email.utils import formataddr
 import re
 
-# 경로 설정 (템플릿 PDF)
 PDF_TEMPLATE_PATH = "consent.pdf"
 TRANSFER_FORM_PATH = "transfer.pdf"
 FONT_PATH = "malgun.ttf"
@@ -25,13 +24,11 @@ CONSENT_SAMPLE_PATH = "consent_sample.pdf"
 TRANSFER_SAMPLE_PATH = "transfer_sample.pdf"
 XLSX_FILE_PATH = "school_data.xlsx"
 
-# 환경 변수에서 이메일 설정 정보 읽어오기
 MAIL_FROM = os.getenv("MAIL_FROM")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 SMTP_SERVER = os.getenv("SMTP_SERVER")
 SMTP_PORT = int(os.getenv("SMTP_PORT"))
 
-# 페이지 설정
 try:
     favicon_image = Image.open("my_favicon.png")
     st.set_page_config(
@@ -43,14 +40,12 @@ except FileNotFoundError:
     st.warning("파비콘 이미지 파일을 찾을 수 없습니다. 기본 아이콘이 사용됩니다.")
     st.set_page_config(page_title="전입학예정확인서", layout="centered")
 
-# 학년을 영어 형식으로 변환하는 함수
 def grade_to_english(grade):
     number = re.search(r'\d+', grade)
     if number:
         return f"{number.group()}gr"
     return grade
 
-# PDF 파일을 이미지로 변환하는 함수
 def convert_pdf_to_images(pdf_path, dpi=150):
     try:
         images = convert_from_path(pdf_path, dpi=dpi)
@@ -59,7 +54,6 @@ def convert_pdf_to_images(pdf_path, dpi=150):
         st.error(f"PDF를 이미지로 변환 중 오류 발생: {e}")
         return None
 
-# 기존 CSS 유지
 st.markdown("""
     <style>
     .title {
@@ -94,7 +88,6 @@ st.markdown("""
     <h1 class="title">전입학예정확인서</h1>
 """, unsafe_allow_html=True)
 
-# 사용자 안내
 st.markdown('<div class="instruction-message">🍀 진  행 순  서 🍀<br> ①지역 및 학교 → ②개인정보 수집·이용 동의서 → ③전입학예정확인서 → ④미리보기 및 제출</div>', unsafe_allow_html=True)
 
 # Streamlit Session State 초기화
@@ -110,13 +103,11 @@ if 'stage' not in st.session_state:
     st.session_state.pdf_bytes = None
     st.session_state.filename = None
 
-# 입력 검증 함수
 def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date):
     if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date]):
         return False, "모든 작성칸을 빈칸 없이 예시에 따라 작성하세요."
     return True, ""
 
-# 이메일 발송 함수
 def send_pdf_email(pdf_data, filename, recipient_email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(pattern, recipient_email):
@@ -158,18 +149,14 @@ def send_pdf_email(pdf_data, filename, recipient_email):
         st.error("이메일 설정을 확인하고 다시 시도해주세요.")
         return False
 
-# 세션 데이터 초기화 함수
 def clear_session_state():
-    keys_to_keep = []  # 필요한 경우 유지할 키 지정
+    keys_to_keep = []
     for key in list(st.session_state.keys()):
         if key not in keys_to_keep:
             del st.session_state[key]
 
-# 전화번호 포맷팅 함수
 def format_phone_number(phone_input):
-    # 숫자만 추출
     digits = ''.join(filter(str.isdigit, phone_input))
-    # 11자리 숫자인지 확인
     if len(digits) != 11 or not digits.startswith('010'):
         return None, "휴대전화 번호는 010으로 시작하며 숫자로만 작성하세요."
     # 010-XXXX-XXXX 형식으로 변환
@@ -361,7 +348,6 @@ elif st.session_state.stage == 3:
             st.error(error)
             st.stop()
         try:
-            # 서명 비율 체크
             def calculate_signature_coverage(image_data):
                 alpha_channel = image_data[:, :, 3]
                 drawn_pixels = (alpha_channel > 0).sum()
@@ -375,7 +361,6 @@ elif st.session_state.stage == 3:
                 st.warning("학생과 법정대리인 모두 올바르게 서명하세요.")
                 st.stop()
 
-            # 서명을 메모리에서 처리
             student_sign_buffer = BytesIO()
             parent_sign_buffer = BytesIO()
             Image.fromarray(canvas_student.image_data.astype('uint8'), mode='RGBA').save(student_sign_buffer, format='PNG', optimize=True)
@@ -403,10 +388,10 @@ elif st.session_state.stage == 3:
                 "{{relationship}}": [(1110, 520)],
                 "{{student_birth_date}}": [(462, 520)],
                 "{{parent_phone}}": [(1110, 620)],
-                "{{move_date}}": [(462, 835)],
-                "{{address}}": [(1110, 813), (500, 1185)],
-                "{{school_name}}": [(462, 1050), (310, 1255), (925, 2053)],
-                "{{next_grade}}": [(1110, 1050), (840, 1255)],
+                "{{move_date}}": [(462, 825)],
+                "{{address}}": [(1110, 810), (500, 1165)],
+                "{{school_name}}": [(462, 1035), (310, 1235), (925, 2056)],
+                "{{next_grade}}": [(1110, 1035), (840, 1235)],
                 "{{date.today}}": [(1100, 1620)],
                 "{{student_sign_path}}": [(1060, 1730)],
                 "{{parent_sign_path}}": [(1060, 1870)],
@@ -498,7 +483,6 @@ elif st.session_state.stage == 3:
         except Exception as e:
             st.error(f"PDF 생성 중 오류 발생: {e}")
         finally:
-            # 메모리 버퍼 정리
             try:
                 student_sign_buffer.close()
                 parent_sign_buffer.close()
@@ -537,7 +521,6 @@ elif st.session_state.stage == 4:
                         selected_school_email = email_series.values[0]
                         if send_pdf_email(st.session_state.pdf_bytes, st.session_state.filename, selected_school_email):
                             st.success("정상적으로 제출되었습니다. 협조해 주셔서 감사합니다.")
-                            # 제출 완료 후 즉시 세션 데이터 초기화
                             clear_session_state()
                         else:
                             st.error("오류가 발생했습니다. 다시 처음부터 진행해주세요.")
