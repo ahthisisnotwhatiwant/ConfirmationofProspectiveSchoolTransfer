@@ -347,7 +347,8 @@ elif st.session_state.stage == 3:
     next_grade = st.selectbox(
         "전학 예정 학년",
         options=["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"],
-        index="학년을 선택하세요.",
+        index=None,
+        placeholder="학년을 선택하세요.",
         key="next_grade_input"
     )
 
