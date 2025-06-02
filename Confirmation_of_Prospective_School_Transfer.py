@@ -228,7 +228,7 @@ elif st.session_state.stage == 3:
 
     transfer_images = convert_pdf_to_images(TRANSFER_SAMPLE_PATH, dpi=150)
     if transfer_images:
-        with st.expander("📄 전입학예정확인서 예시", expanded=False):
+        with st.expander("📄 전입학예정확인서 예시", expanded=True):
             for i, image in enumerate(transfer_images):
                 st.image(image, use_container_width=True)
     else:
