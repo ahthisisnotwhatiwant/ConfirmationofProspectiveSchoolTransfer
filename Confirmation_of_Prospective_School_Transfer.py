@@ -103,8 +103,8 @@ if 'stage' not in st.session_state:
     st.session_state.pdf_bytes = None
     st.session_state.filename = None
 
-def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, transfer_date, next_grade, move_date, relationship):
-    if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, transfer_date, next_grade, move_date, relationship]):
+def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date, relationship):
+    if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date, relationship]):
         return False, "모든 작성칸을 빈칸 없이 예시에 따라 작성하세요."
     return True, ""
 
@@ -233,9 +233,9 @@ elif st.session_state.stage == 3:
                 st.image(image, use_container_width=True)
     else:
         st.error("전입학예정확인서 샘플 PDF를 불러올 수 없습니다. 파일 경로를 확인해주세요.")
-    
-    row1_col1, row1_col2, row1_col3 = st.columns(3)
-    with row1_col1:
+
+    col1, col2 = st.columns(2)
+    with col1:
         student_name = st.text_input(
             "(학생) 성명",
             placeholder="예) 한잎새",
@@ -247,10 +247,9 @@ elif st.session_state.stage == 3:
         else:
             st.session_state.student_name = student_name
 
-    with row1_col2:
         today = date.today()
-        min_date = today - timedelta(days=30 * 365)
-        max_date = today + timedelta(days=30 * 365)
+        min_date = today - timedelta(days=30*365)
+        max_date = today + timedelta(days=30*365)
         st.session_state.student_birth_date = st.date_input(
             "(학생) 생년월일",
             value=None,
@@ -258,19 +257,18 @@ elif st.session_state.stage == 3:
             max_value=max_date,
             key="student_birth_date_input"
         )
-
-    with row1_col3:
         student_school = st.text_input(
             "(학생) 현 소속 학교 및 학년",
             placeholder="예) 00초등학교, 00중학교, 00고등학교 1학년",
             key="student_school_input"
         )
-        if student_school and "학교" not in student_school:
-            st.error("‘학교’라는 단어를 포함하여 작성하세요.")
-            student_school = ""
-
-    row2_col1, row2_col2, row2_col3 = st.columns(3)
-    with row2_col1:
+        if student_school:
+            if "학교" not in student_school:
+                st.error("'학교'를 반드시 포함하여 작성하세요.")
+                student_school = ""
+            elif not re.match(r'^[가-힣0-9\s]+$', student_school) or re.match(r'^\d+$', student_school):
+                st.error("한글과 숫자로만 작성하세요.")
+                student_school = ""
         parent_name = st.text_input(
             "(법정대리인) 성명",
             placeholder="예) 한나무",
@@ -279,7 +277,6 @@ elif st.session_state.stage == 3:
         if parent_name and not re.match(r'^[가-힣]+$', parent_name):
             st.error("한글로만 작성하세요.")
             parent_name = ""
-    with row2_col2:
         relationship = st.text_input(
             "(법정대리인) 학생과의 관계",
             placeholder="예) 부, 모, 조부, 조모 등",
@@ -288,10 +285,10 @@ elif st.session_state.stage == 3:
         if relationship and not re.match(r'^[가-힣\s]+$', relationship):
             st.error("한글로만 작성하세요.")
             relationship = ""
-    with row2_col3:
+    with col2:
         parent_phone_input = st.text_input(
             "(법정대리인) 휴대전화 번호",
-            placeholder="예) 010-1234-5678 또는 01012345678",
+            placeholder="예) 01056785678 / 숫자로만 작성",
             key="parent_phone_input"
         )
         if parent_phone_input:
@@ -303,84 +300,96 @@ elif st.session_state.stage == 3:
                 parent_phone = formatted_parent_phone
         else:
             parent_phone = ""
+        st.session_state.move_date = st.date_input("전입 예정일", value=None)
+        address = st.text_input(
+            "전입 예정 주소",
+            placeholder="예) 행복택지 A-1블록 사랑아파트",
+            key="address_input"
+        )
+        if address and not re.match(r'^[가-힣a-zA-Z1-99\s-]+$', address):
+            st.error("한글, 알파벳, 숫자, 기호로만 작성하세요.")
+            address = ""
+        school_name = st.text_input("전학 예정 학교", value=st.session_state.selected_school, disabled=True)
+        next_grade = st.selectbox(
+            "전학 예정 학년",
+            options=["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"],
+            index=None,
+            placeholder="학년을 선택하세요.",
+            key="next_grade_input"
+        )
 
-    st.session_state.move_date = st.date_input(
-        "전입 예정일",
-        value=None,
-        key="move_date_input"
-    )
-
-    address = st.text_input(
-        "전입 예정 주소",
-        placeholder="예) 행복택지 A-1블록 사랑아파트",
-        key="address_input"
-    )
-    if address and not re.match(r'^[가-힣a-zA-Z0-9\s-]+$', address):
-        st.error("한글, 알파벳, 숫자, 기호로만 작성하세요.")
-        address = ""
-
-    st.session_state.transfer_date = st.date_input(
-        "전학 예정일",
-        value=None,
-        key="transfer_date_input"
-    )
-
-    school_name = st.text_input(
-        "전학 예정 학교",
-        value=st.session_state.selected_school,
-        disabled=True
-    )
-
-    next_grade = st.selectbox(
-        "전학 예정 학년",
-        options=["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"],
-        index=None,
-        placeholder="학년을 선택하세요.",
-        key="next_grade_input"
-    )
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("학생 서명")
+        canvas_student = st_canvas(
+            fill_color="rgba(255, 255, 255, 0)",
+            stroke_width=5,
+            background_color="rgba(255, 255, 255, 0)",
+            height=150,
+            width=300,
+            drawing_mode="freedraw",
+            key="student_sign_canvas"
+        )
+    with col2:
+        st.write("법정대리인 서명")
+        canvas_parent = st_canvas(
+            fill_color="rgba(255, 255, 255, 0)",
+            stroke_width=5,
+            background_color="rgba(255, 255, 255, 0)",
+            height=150,
+            width=300,
+            drawing_mode="freedraw",
+            key="parent_sign_canvas"
+        )
 
     if st.button("✒️다음 단계로"):
-        valid, error = validate_inputs(
-            st.session_state.student_name,
-            parent_name,
-            student_school,
-            st.session_state.student_birth_date,
-            parent_phone,
-            address,
-            st.session_state.transfer_date,
-            next_grade,
-            st.session_state.move_date,
-            relationship
-        )
+        valid, error = validate_inputs(st.session_state.student_name, parent_name, student_school, st.session_state.student_birth_date, relationship, parent_phone, address, next_grade, st.session_state.move_date)
         if not valid:
             st.error(error)
             st.stop()
         try:
-            transfer_map = {
-                **consent_map,
-                "{{student_school}}": student_school,
-                "{{relationship}}": relationship,
-                "{{student_birth_date}}": st.session_state.student_birth_date.strftime("%Y년 %m월 %d일"),
-                "{{parent_phone}}": parent_phone,
-                "{{move_date}}": st.session_state.move_date.strftime("%Y년 %m월 %d일"),
-                "{{address}}": address,
-                "{{transfer_date}}": st.session_state.transfer_date.strftime("%Y년 %m월 %d일"),
-                "{{school_name}}": st.session_state.selected_school,
-                "{{next_grade}}": next_grade,
-            }
+            def calculate_signature_coverage(image_data):
+                alpha_channel = image_data[:, :, 3]
+                drawn_pixels = (alpha_channel > 0).sum()
+                total_pixels = image_data.shape[0] * image_data.shape[1]
+                return drawn_pixels / total_pixels
 
-            positions = {
+            student_coverage = calculate_signature_coverage(canvas_student.image_data)
+            parent_coverage = calculate_signature_coverage(canvas_parent.image_data)
+
+            if student_coverage < 0.05 or parent_coverage < 0.05:
+                st.warning("학생과 법정대리인 모두 올바르게 서명하세요.")
+                st.stop()
+
+            student_sign_buffer = BytesIO()
+            parent_sign_buffer = BytesIO()
+            Image.fromarray(canvas_student.image_data.astype('uint8'), mode='RGBA').save(student_sign_buffer, format='PNG', optimize=True)
+            Image.fromarray(canvas_parent.image_data.astype('uint8'), mode='RGBA').save(parent_sign_buffer, format='PNG', optimize=True)
+
+            pages1 = convert_from_path(PDF_TEMPLATE_PATH, dpi=200)
+            page1 = pages1[0].convert('RGBA')
+            pages2 = convert_from_path(TRANSFER_FORM_PATH, dpi=200)
+            page2 = pages2[0].convert('RGBA')
+            draw1 = ImageDraw.Draw(page1)
+            draw2 = ImageDraw.Draw(page2)
+
+            consent_positions = {
                 "{{date.today}}": [(1100, 1550)],
                 "{{student_name}}": [(825, 1695)],
                 "{{student_sign_path}}": [(1060, 1665)],
                 "{{parent_name}}": [(825, 1835)],
+                "{{parent_sign_path}}": [(1060, 1810)],
+                "{{school_name}}": [(925, 1988)],
+            }
+            transfer_positions = {
+                "{{student_name}}": [(462, 420), (825, 1755)],
+                "{{parent_name}}": [(1110, 420), (825, 1888)],
                 "{{student_school}}": [(462, 625)],
                 "{{relationship}}": [(1110, 520)],
                 "{{student_birth_date}}": [(462, 520)],
                 "{{parent_phone}}": [(1110, 620)],
                 "{{move_date}}": [(462, 825)],
                 "{{address}}": [(1110, 810), (490, 1170)],
-                "{{transfer_date}}": [(462, 930)],       # 새로 추가된 위치
                 "{{school_name}}": [(462, 1035), (310, 1235), (925, 2056)],
                 "{{next_grade}}": [(1110, 1035), (840, 1235)],
                 "{{date.today}}": [(1100, 1620)],
