@@ -59,7 +59,6 @@ st.markdown("""
     .title {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #4c51bf;
         text-align: center;
         padding-bottom: 0.5rem;
         margin-bottom: 0rem;
