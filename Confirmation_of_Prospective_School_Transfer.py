@@ -103,8 +103,8 @@ if 'stage' not in st.session_state:
     st.session_state.pdf_bytes = None
     st.session_state.filename = None
 
-def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date):
-    if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date]):
+def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date, relationship):
+    if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, next_grade, move_date, relationship]):
         return False, "모든 작성칸을 빈칸 없이 예시에 따라 작성하세요."
     return True, ""
 
