@@ -80,7 +80,7 @@ st.markdown("""
         font-size: 3rem;
         font-weight: bold;
         text-align: center;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0rem;
         margin-bottom: 0rem;
         white-space: nowrap;
     }
