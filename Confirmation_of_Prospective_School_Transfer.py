@@ -642,7 +642,7 @@ elif st.session_state.stage == 4:
                             st.success("정상적으로 제출되었습니다. 협조해 주셔서 감사합니다.")
                             log_submission_to_sheets(
                                 st.session_state.selected_school,
-                                st.session_state.next_grade,
+                                st.session_state.next_grade_input,
                                 st.session_state.student_name
                             )
                             clear_session_state()
