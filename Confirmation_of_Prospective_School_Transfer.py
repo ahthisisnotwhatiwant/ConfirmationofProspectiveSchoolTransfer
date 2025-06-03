@@ -174,9 +174,18 @@ if 'stage' not in st.session_state:
     st.session_state.filename = None
     st.session_state.next_grade_input = ""
 
-def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, transfer_date, next_grade, move_date, relationship):
-    if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, transfer_date, next_grade, move_date, relationship]):
+def validate_inputs(student_name, parent_name, student_school, student_birth_date,
+                    parent_phone, address, transfer_date, next_grade, move_date, relationship):
+    # (1) 모든 칸이 채워졌는지 먼저 확인
+    if not all([student_name, parent_name, student_school, student_birth_date,
+                parent_phone, address, transfer_date, next_grade, move_date, relationship]):
         return False, "모든 작성칸을 빈칸 없이 예시에 따라 작성하세요."
+
+    # (2) next_grade가 실제 학년("1학년"~"6학년")인지 검증
+    valid_grades = {"1학년", "2학년", "3학년", "4학년", "5학년", "6학년"}
+    if next_grade not in valid_grades:
+        return False, "전학 예정 학년을 올바르게 선택하세요."
+
     return True, ""
 
 def send_pdf_email(pdf_data, filename, recipient_email):
@@ -403,14 +412,14 @@ elif st.session_state.stage == 3:
         st.error("한글, 알파벳, 숫자, 기호로만 작성하세요.")
         address = ""
 
-    # 신규 추가: (전학) 전학 예정일
+    # (전학) 전학 예정일
     transfer_date = st.date_input(
         "전학 예정일",
         value=None,
         key="transfer_date_input"   # 키를 새로 지정
     )
 
-    # (전학) 전학 예정 학교 (disabled)
+    # (전학) 전학 예정 학교
     school_name = st.text_input(
         "전학 예정 학교",
         value=st.session_state.selected_school,
@@ -418,11 +427,11 @@ elif st.session_state.stage == 3:
     )
 
     # (전학) 전학 예정 학년
+    grade_options = ["학년을 선택하세요.", "1학년", "2학년", "3학년", "4학년", "5학년", "6학년"]
     next_grade = st.selectbox(
         "전학 예정 학년",
-        options=["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"],
-        index=None,
-        placeholder="학년을 선택하세요.",
+        options=grade_options,
+        index=0,
         key="next_grade_input"
     )
 
