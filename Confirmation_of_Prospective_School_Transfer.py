@@ -425,17 +425,17 @@ elif st.session_state.stage == 3:
     )
 
     # (전학) 전학 예정 학년
-    next_grade_num = st.number_input(
-        "전학 예정 학년 (숫자로 입력, 1~6 사이)",
-        min_value=0,
-        max_value=6,
-        value=0,
-        step=1,
+    next_grade_raw = st.text_input(
+        "전학 예정 학년",
+        placeholder="예) 3학년 → 3 / 숫자만 입력",
         key="next_grade_num_input"
     )
-
-    if next_grade_num in range(1, 7):
-        next_grade = f"{int(next_grade_num)}학년"
+    if next_grade_raw:
+        if re.fullmatch(r"[1-6]", next_grade_raw):
+            next_grade = f"{next_grade_raw}학년"
+        else:
+            st.error("1~6 사이의 숫자만 입력하세요.")
+            next_grade = ""
     else:
         next_grade = ""
 
