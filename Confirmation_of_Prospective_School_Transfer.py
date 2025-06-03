@@ -463,8 +463,6 @@ elif st.session_state.stage == 3:
             key="parent_sign_canvas"
         )
 
-    # ────────────────────────────────────────────────────────
-    # 다음 단계 전 검증: transfer_date(전학 예정일) 인자를 validate_inputs에 추가
     if st.button("✒️다음 단계로"):
         valid, error = validate_inputs(
             st.session_state.student_name,
@@ -483,10 +481,6 @@ elif st.session_state.stage == 3:
             st.stop()
 
         st.session_state.next_grade_input = next_grade
-        st.session_state.pdf_bytes = pdf_bytes
-        st.session_state.filename = filename
-        st.session_state.stage = 4
-        st.rerun()
         
         try:
             def calculate_signature_coverage(image_data):
