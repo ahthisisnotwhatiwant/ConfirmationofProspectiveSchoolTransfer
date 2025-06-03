@@ -425,22 +425,20 @@ elif st.session_state.stage == 3:
     )
 
     # (전학) 전학 예정 학년
-    grade_options = ["학년을 선택하세요", "1학년", "2학년", "3학년", "4학년", "5학년", "6학년"]
-    
-    saved = st.session_state.get("next_grade_input", None)
-    if saved not in grade_options:
-        saved = "학년을 선택하세요"
-        st.session_state.next_grade_input = saved
-
-    next_grade = st.selectbox(
-        "전학 예정 학년",
-        options=grade_options,
-        index=grade_options.index(saved),
-        key="next_grade_input"
+    next_grade_num = st.number_input(
+        "전학 예정 학년 (숫자로 입력, 1~6 사이)",
+        min_value=0,
+        max_value=6,
+        value=0,
+        step=1,
+        key="next_grade_num_input"
     )
 
-    # ────────────────────────────────────────────────────────
-    # 서명 부분 (변경 없음)
+    if next_grade_num in range(1, 7):
+        next_grade = f"{int(next_grade_num)}학년"
+    else:
+        next_grade = ""
+
     col1, col2 = st.columns(2)
     with col1:
         st.write("학생 서명")
@@ -475,7 +473,7 @@ elif st.session_state.stage == 3:
             st.session_state.student_birth_date,
             parent_phone,
             address,
-            transfer_date,       # 전학 예정일
+            transfer_date,    
             next_grade,
             st.session_state.move_date,
             relationship
@@ -483,6 +481,13 @@ elif st.session_state.stage == 3:
         if not valid:
             st.error(error)
             st.stop()
+
+        st.session_state.next_grade_input = next_grade
+        st.session_state.pdf_bytes = pdf_bytes
+        st.session_state.filename = filename
+        st.session_state.stage = 4
+        st.rerun()
+        
         try:
             def calculate_signature_coverage(image_data):
                 alpha_channel = image_data[:, :, 3]
