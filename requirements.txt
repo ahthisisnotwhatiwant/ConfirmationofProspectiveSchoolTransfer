@@ -4,6 +4,5 @@ openpyxl
 pdf2image
 Pillow
 streamlit-drawable-canvas
-smtplib  
 gspread>=5.0.0
 oauth2client>=4.1.3
