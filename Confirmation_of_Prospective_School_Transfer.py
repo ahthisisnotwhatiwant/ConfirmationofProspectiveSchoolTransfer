@@ -164,6 +164,7 @@ if 'stage' not in st.session_state:
     st.session_state.student_birth_date = None
     st.session_state.pdf_bytes = None
     st.session_state.filename = None
+    st.session_state.next_grade_input = ""
 
 def validate_inputs(student_name, parent_name, student_school, student_birth_date, parent_phone, address, transfer_date, next_grade, move_date, relationship):
     if not all([student_name, parent_name, student_school, student_birth_date, parent_phone, address, transfer_date, next_grade, move_date, relationship]):
