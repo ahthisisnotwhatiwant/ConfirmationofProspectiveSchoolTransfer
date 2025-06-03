@@ -16,6 +16,9 @@ from email import encoders
 from email.header import Header
 from email.utils import formataddr
 import re
+import json
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 PDF_TEMPLATE_PATH = "consent.pdf"
 TRANSFER_FORM_PATH = "transfer.pdf"
@@ -28,6 +31,64 @@ MAIL_FROM = os.getenv("MAIL_FROM")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 SMTP_SERVER = os.getenv("SMTP_SERVER")
 SMTP_PORT = int(os.getenv("SMTP_PORT"))
+
+# ────────────────────────────────────────────────────────
+def init_gspread_client():
+    """
+    st.secrets["GSHEET"]["SERVICE_ACCOUNT_KEY"] 에 담긴 JSON 문자열을 파싱하여
+    OAuth2 인증을 수행하고, gspread 클라이언트를 반환합니다.
+    """
+    service_account_info = json.loads(st.secrets["GSHEET"]["SERVICE_ACCOUNT_KEY"])
+    scopes = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive",
+    ]
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scopes)
+    client = gspread.authorize(credentials)
+    return client
+
+_gspread_client = None
+def get_gspread_client():
+    """
+    전역 변수 _gspread_client에 한 번만 init 후 반환하도록 합니다.
+    """
+    global _gspread_client
+    if _gspread_client is None:
+        _gspread_client = init_gspread_client()
+    return _gspread_client
+
+def get_worksheet():
+    """
+    get_gspread_client()를 통해 인증된 client를 얻고,
+    st.secrets["GSHEET"]["SPREADSHEET_ID"] + st.secrets["GSHEET"]["SHEET_NAME"]를 이용해
+    실제 Worksheet 객체를 리턴합니다.
+    """
+    client = get_gspread_client()
+    spreadsheet_id = st.secrets["GSHEET"]["SPREADSHEET_ID"]
+    sheet_name = st.secrets["GSHEET"].get("SHEET_NAME", "Sheet1")
+    sh = client.open_by_key(spreadsheet_id)
+    try:
+        worksheet = sh.worksheet(sheet_name)
+    except Exception:
+        worksheet = sh.get_worksheet(0)
+    return worksheet
+# ────────────────────────────────────────────────────────
+
+# ────────────────────────────────────────────────────────
+def log_submission_to_sheets(school: str, grade: str):
+    """
+    제출 완료 시 호출합니다.
+    [타임스탬프, 학교명, 학년] 형태로 시트에 한 줄을 추가합니다.
+    """
+    try:
+        ws = get_worksheet()
+        from datetime import datetime
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ws.append_row([now, school, grade])
+    except Exception as e:
+        # 시트 연결 문제 등 에러 발생 시, 사용자에게 알립니다.
+        st.error(f"구글 시트 로깅 중 오류 발생: {e}")
+# ────────────────────────────────────────────────────────
 
 try:
     favicon_image = Image.open("my_favicon.png")
@@ -576,6 +637,10 @@ elif st.session_state.stage == 4:
                         selected_school_email = email_series.values[0]
                         if send_pdf_email(st.session_state.pdf_bytes, st.session_state.filename, selected_school_email):
                             st.success("정상적으로 제출되었습니다. 협조해 주셔서 감사합니다.")
+                            log_submission_to_sheets(
+                                st.session_state.selected_school,
+                                st.session_state.next_grade_input
+                            )
                             clear_session_state()
                         else:
                             st.error("오류가 발생했습니다. 다시 처음부터 진행해주세요.")
