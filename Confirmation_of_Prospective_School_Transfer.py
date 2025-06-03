@@ -82,7 +82,13 @@ def log_submission_to_sheets(school: str, grade: str, student_name: str):
     """
     try:
         ws = get_worksheet()
-        # 대한민국(Asia/Seoul) 로컬 시간으로 타임스탬프 생성
+        # (1) 인자로 넘어온 grade, student_name이 비어 있으면 session_state에서 가져오도록
+        if not grade:
+            grade = st.session_state.get("next_grade_input", "")
+        if not student_name:
+            student_name = st.session_state.get("student_name", "")
+
+        # (2) 대한민국(Asia/Seoul) 로컬 시간으로 타임스탬프 생성
         from datetime import datetime
         from zoneinfo import ZoneInfo
         now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")
