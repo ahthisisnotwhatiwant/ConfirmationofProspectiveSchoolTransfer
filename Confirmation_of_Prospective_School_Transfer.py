@@ -75,16 +75,18 @@ def get_worksheet():
 # ────────────────────────────────────────────────────────
 
 # ────────────────────────────────────────────────────────
-def log_submission_to_sheets(school: str, grade: str):
+def log_submission_to_sheets(school: str, grade: str, student_name: str):
     """
     제출 완료 시 호출합니다.
-    [타임스탬프, 학교명, 학년] 형태로 시트에 한 줄을 추가합니다.
+    [타임스탬프(한국 시간), 학교명, 학생 성명, 전학 예정 학년] 순서로 시트에 한 줄을 추가합니다.
     """
     try:
         ws = get_worksheet()
+        # 대한민국(Asia/Seoul) 로컬 시간으로 타임스탬프 생성
         from datetime import datetime
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ws.append_row([now, school, grade])
+        from zoneinfo import ZoneInfo
+        now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")
+        ws.append_row([now, school, student_name, grade])
     except Exception as e:
         # 시트 연결 문제 등 에러 발생 시, 사용자에게 알립니다.
         st.error(f"구글 시트 로깅 중 오류 발생: {e}")
@@ -640,7 +642,8 @@ elif st.session_state.stage == 4:
                             st.success("정상적으로 제출되었습니다. 협조해 주셔서 감사합니다.")
                             log_submission_to_sheets(
                                 st.session_state.selected_school,
-                                st.session_state.next_grade_input
+                                st.session_state.next_grade_input,
+                                st.session_state.student_name
                             )
                             clear_session_state()
                         else:
