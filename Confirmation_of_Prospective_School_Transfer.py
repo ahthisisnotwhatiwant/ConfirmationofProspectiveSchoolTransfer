@@ -425,16 +425,17 @@ elif st.session_state.stage == 3:
     )
 
     # (전학) 전학 예정 학년
-    grade_options = ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"]
+    grade_options = ["학년을 선택하세요", "1학년", "2학년", "3학년", "4학년", "5학년", "6학년"]
     
-    default_value = st.session_state.get("next_grade_input", None)
-    if default_value not in grade_options:
-        default_value = None
+    saved = st.session_state.get("next_grade_input", None)
+    if saved not in grade_options:
+        saved = "학년을 선택하세요"
+        st.session_state.next_grade_input = saved
 
     next_grade = st.selectbox(
         "전학 예정 학년",
         options=grade_options,
-        index=0 if default_value is None else grade_options.index(default_value),
+        index=grade_options.index(saved),
         key="next_grade_input"
     )
 
